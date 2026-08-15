@@ -1,0 +1,8 @@
+# Foundation and automation require repository-owner review.
+/AGENTS.md @RL22
+/brand.md @RL22
+/content-model.md @RL22
+/site.md @RL22
+/schemas/ @RL22
+/scripts/ @RL22
+/.github/ @RL22
