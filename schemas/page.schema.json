@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:minimal:schema:page",
+  "title": "Minimal canonical page frontmatter",
+  "description": "Validates normalized YAML frontmatter for one canonical Markdown route.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "route",
+    "page_type",
+    "status",
+    "title",
+    "seo_title",
+    "seo_description",
+    "audiences",
+    "primary_cta",
+    "related_pages",
+    "sections",
+    "claims"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/stableId",
+      "description": "Permanent page identifier. A route change does not change this value."
+    },
+    "route": {
+      "$ref": "#/$defs/route"
+    },
+    "page_type": {
+      "type": "string",
+      "enum": [
+        "home",
+        "product",
+        "solution",
+        "industry",
+        "pricing",
+        "resource",
+        "blog_index",
+        "blog_post",
+        "company",
+        "careers",
+        "legal",
+        "landing"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "in-review",
+        "approved",
+        "published",
+        "archived"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[^\\s\\r\\n](?:[^\\r\\n]*[^\\s\\r\\n])?$"
+    },
+    "seo_title": {
+      "type": "string",
+      "minLength": 30,
+      "maxLength": 60,
+      "pattern": "^[^\\s\\r\\n](?:[^\\r\\n]*[^\\s\\r\\n])?$"
+    },
+    "seo_description": {
+      "type": "string",
+      "minLength": 70,
+      "maxLength": 160,
+      "pattern": "^[^\\s\\r\\n](?:[^\\r\\n]*[^\\s\\r\\n])?$"
+    },
+    "audiences": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/referenceId"
+      }
+    },
+    "primary_cta": {
+      "$ref": "#/$defs/referenceId"
+    },
+    "related_pages": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/route"
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/stableId"
+      },
+      "description": "Ordered section IDs; body sections must match this order exactly."
+    },
+    "claims": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    }
+  },
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "referenceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "route": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240,
+      "pattern": "^/(?:[a-z0-9]+(?:-[a-z0-9]+)*(?:/[a-z0-9]+(?:-[a-z0-9]+)*)*)?$",
+      "description": "Root or lowercase canonical path without a trailing slash, query, or fragment."
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "statement",
+        "treatment",
+        "section_ids"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableId"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "quantitative",
+            "customer",
+            "certification",
+            "analyst-recognition",
+            "product-capability",
+            "comparative",
+            "general"
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\s\\r\\n](?:[^\\r\\n]*[^\\s\\r\\n])?$"
+        },
+        "treatment": {
+          "type": "string",
+          "enum": [
+            "demo",
+            "substantiated"
+          ]
+        },
+        "demo_label": {
+          "type": "string",
+          "const": "Demo only"
+        },
+        "section_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableId"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "enum": [
+                  "quantitative",
+                  "customer",
+                  "certification",
+                  "analyst-recognition"
+                ]
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "properties": {
+              "treatment": {
+                "const": "demo"
+              },
+              "demo_label": {
+                "const": "Demo only"
+              }
+            },
+            "required": [
+              "demo_label"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "treatment": {
+                "const": "demo"
+              }
+            },
+            "required": [
+              "treatment"
+            ]
+          },
+          "then": {
+            "required": [
+              "demo_label"
+            ]
+          },
+          "else": {
+            "required": [
+              "evidence"
+            ],
+            "not": {
+              "required": [
+                "demo_label"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_type",
+        "label",
+        "url"
+      ],
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "product-spec",
+            "customer-approval",
+            "case-study",
+            "research",
+            "legal-approval",
+            "internal-document"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "pattern": "^[^\\s\\r\\n](?:[^\\r\\n]*[^\\s\\r\\n])?$"
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "format": "uri-reference",
+          "pattern": "^\\S+$"
+        },
+        "accessed": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      }
+    }
+  }
+}

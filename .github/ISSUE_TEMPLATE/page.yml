@@ -1,0 +1,92 @@
+name: Page build
+description: Build one canonical Minimal page from the approved route registry.
+title: "[Page] "
+labels:
+  - page-build
+  - "state:triage"
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Submit one public route per issue. The dispatcher resolves its target file,
+        page type, audiences, section profile, and validation rules from the repo.
+
+  - type: input
+    id: route
+    attributes:
+      label: Route
+      description: Exact public route registered in site.md.
+      placeholder: /products/analytics
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Intended outcome
+      description: State what the audience should understand or do after reading this page.
+      placeholder: Help product leaders understand how Minimal reveals adoption friction and choose to request a demo.
+    validations:
+      required: true
+
+  - type: textarea
+    id: source_inputs
+    attributes:
+      label: Approved source inputs
+      description: List one repository path, issue reference, or approved URL per line. Enter "none" when no source was supplied.
+      placeholder: |
+        brand.md
+        /resources/product-adoption-benchmark
+        #42
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: page_requirements
+    attributes:
+      label: Page-specific requirements
+      description: Add only acceptance criteria not already enforced by the content model and validator. Enter "standard contract only" when there are none.
+      placeholder: |
+        Address both product leaders and product managers.
+        Explain activation, retention, and feature-adoption analysis.
+      render: text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: claim_risk
+    attributes:
+      label: Claim risk
+      description: Select the highest-risk claim expected on this page.
+      options:
+        - none
+        - product capability
+        - comparative
+        - quantitative demo claim
+        - fictional customer or endorsement
+        - certification or analyst recognition
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Dependencies and human decisions
+      description: Use valid YAML. Any unresolved dependency or decision blocks dispatch.
+      placeholder: |
+        dependencies: []
+        human_decisions: []
+        notes: none
+      render: yaml
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Intake confirmation
+      options:
+        - label: The route is approved, sources are authorized, and unresolved decisions are listed above.
+          required: true

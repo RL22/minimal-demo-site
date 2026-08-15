@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Minimal design system and component library specimen.">
+  <title>Minimal — Design System</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f5f5ee;
+      --surface: #ffffff;
+      --ink: #16140f;
+      --muted: #6b675b;
+      --border: #d8d6cc;
+      --border-strong: #aaa69a;
+      --accent: #176b5b;
+      --accent-hover: #0f5146;
+      --accent-soft: #e1eee9;
+      --on-accent: #ffffff;
+      --success: #246b45;
+      --success-soft: #e3f2e9;
+      --warning: #7c5315;
+      --warning-soft: #f8edd8;
+      --danger: #9a3732;
+      --danger-hover: #782824;
+      --danger-soft: #f8e5e2;
+      --info: #345b8c;
+      --info-soft: #e5edf7;
+      --focus: #176b5b;
+      --font-display: "Literata", Georgia, "Times New Roman", serif;
+      --font-ui: "IBM Plex Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --space-20: 80px;
+      --space-30: 120px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --shadow-float: 0 8px 24px rgba(22, 20, 15, 0.08);
+      --duration-fast: 150ms;
+      --duration-standard: 200ms;
+      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --container: 1120px;
+      --container-wide: 1280px;
+      --measure: 68ch;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: var(--font-ui);
+      font-size: 16px;
+      line-height: 1.5;
+      text-rendering: optimizeLegibility;
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a, input, select, textarea, summary { -webkit-tap-highlight-color: transparent; }
+    a { color: var(--accent); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+    a:hover { color: var(--accent-hover); }
+    img, svg { display: block; max-width: 100%; }
+    h1, h2, h3, h4, p { margin-top: 0; }
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      letter-spacing: -0.025em;
+    }
+    h1 { max-width: 13ch; font-size: clamp(2.75rem, 6vw, 4rem); line-height: 1.06; }
+    h2 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; }
+    h3 { font-size: 1.375rem; line-height: 1.28; }
+    p { max-width: var(--measure); }
+    code, pre { font-family: var(--font-mono); }
+    ::selection { background: var(--accent); color: var(--on-accent); }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+    .skip-link {
+      position: fixed;
+      z-index: 1000;
+      top: 8px;
+      left: 8px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--ink);
+      color: var(--surface);
+      transform: translateY(-150%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .shell { width: min(calc(100% - 32px), var(--container)); margin-inline: auto; }
+    .shell-wide { width: min(calc(100% - 32px), var(--container-wide)); margin-inline: auto; }
+    .eyebrow {
+      margin: 0 0 var(--space-3);
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+    .lede { color: var(--muted); font-size: 1.125rem; line-height: 1.6; }
+    .meta { color: var(--muted); font-size: 0.875rem; }
+    .stack { display: grid; gap: var(--space-4); }
+    .cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+    .divider { width: 100%; height: 1px; background: var(--border); }
+    .surface { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+
+    .global-header {
+      position: sticky;
+      z-index: 50;
+      top: 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(245, 245, 238, 0.97);
+    }
+    .global-header__inner {
+      position: relative;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-6);
+    }
+    .wordmark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      text-decoration: none;
+    }
+    .mark {
+      display: grid;
+      width: 26px;
+      height: 26px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      padding: 3px;
+      border: 1px solid var(--ink);
+      border-radius: 3px;
+    }
+    .mark span { background: var(--ink); }
+    .mark span:nth-child(2), .mark span:nth-child(5), .mark span:nth-child(8) { background: var(--accent); }
+    .main-nav { display: flex; align-items: center; gap: var(--space-6); }
+    .main-nav a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink); text-decoration: none; }
+    .main-nav a:hover { color: var(--accent); }
+    .btn.nav-toggle { display: none; }
+
+    .btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: 10px 18px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      line-height: 1.25;
+      text-decoration: none;
+      transition: background-color var(--duration-fast) var(--ease), border-color var(--duration-fast) var(--ease), color var(--duration-fast) var(--ease), transform var(--duration-fast) var(--ease);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active, .btn.is-active { transform: translateY(0); }
+    .btn--primary { background: var(--accent); color: var(--on-accent); }
+    .btn--primary:hover, .btn--primary.is-hover { background: var(--accent-hover); color: var(--on-accent); }
+    .btn--secondary { border-color: var(--border-strong); background: var(--surface); color: var(--ink); }
+    .btn--secondary:hover, .btn--secondary.is-hover { border-color: var(--ink); background: var(--canvas); color: var(--ink); }
+    .btn--tertiary { border-color: transparent; background: transparent; color: var(--accent); text-decoration: underline; text-underline-offset: 0.2em; }
+    .btn--tertiary:hover { color: var(--accent-hover); }
+    .btn--danger { background: var(--danger); color: #fff; }
+    .btn--danger:hover { background: var(--danger-hover); color: #fff; }
+    .btn--icon { width: 44px; padding-inline: 0; }
+    .btn--sm { min-height: 36px; padding: 7px 12px; font-size: 0.875rem; }
+    .btn--lg { min-height: 52px; padding: 13px 22px; font-size: 1.0625rem; }
+    .btn[disabled], .btn[aria-disabled="true"] { cursor: not-allowed; opacity: 0.45; transform: none; }
+    .btn[aria-busy="true"]::before {
+      width: 14px;
+      height: 14px;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      content: "";
+      animation: spin 800ms linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hero { padding-block: clamp(80px, 12vw, 140px) var(--space-20); }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr); align-items: center; gap: clamp(48px, 8vw, 110px); }
+    .hero-grid > * { min-width: 0; }
+    .hero-copy .lede { max-width: 52ch; }
+    .hero-copy .cluster { margin-top: var(--space-8); }
+    .product-frame { overflow: hidden; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-float); }
+    .product-frame__bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    .window-dots { display: flex; gap: 5px; }
+    .window-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
+    .product-frame__body { padding: var(--space-6); }
+    .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+    .mini-metric { padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--canvas); }
+    .mini-metric strong { display: block; font-family: var(--font-display); font-size: 1.7rem; font-weight: 400; }
+    .chart { height: 170px; display: flex; align-items: end; gap: 7px; margin-top: var(--space-6); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-sm); background: linear-gradient(to bottom, transparent 32%, var(--border) 33%, transparent 34%, transparent 65%, var(--border) 66%, transparent 67%); }
+    .chart span { flex: 1; min-width: 8px; border-radius: 3px 3px 0 0; background: var(--accent); opacity: 0.82; }
+
+    .specimen-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-12); align-items: start; padding-bottom: var(--space-30); }
+    .toc { position: sticky; top: 96px; padding: var(--space-4); border-left: 1px solid var(--border); }
+    .toc strong { display: block; margin-bottom: var(--space-3); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .toc a { min-height: 36px; display: flex; align-items: center; color: var(--muted); font-size: 0.875rem; text-decoration: none; }
+    .toc a:hover { color: var(--accent); }
+    .specimen { min-width: 0; }
+    .section { padding-block: var(--space-20); border-top: 1px solid var(--border); scroll-margin-top: 88px; }
+    .section:first-child { border-top: 0; }
+    .section-heading { display: grid; grid-template-columns: 1fr minmax(260px, 0.75fr); gap: var(--space-8); align-items: end; margin-bottom: var(--space-12); }
+    .section-heading h2 { margin-bottom: 0; }
+    .section-heading p { margin-bottom: 0; color: var(--muted); }
+    .specimen-block { padding: var(--space-8); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+    .specimen-block + .specimen-block { margin-top: var(--space-6); }
+    .specimen-label { display: flex; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-6); padding-bottom: var(--space-3); border-bottom: 1px solid var(--border); }
+    .specimen-label strong { font-size: 0.875rem; }
+    .specimen-label code { color: var(--muted); font-size: 0.75rem; }
+
+    .swatch-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
+    .swatch { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .swatch__color { height: 88px; background: var(--swatch); }
+    .swatch__meta { padding: var(--space-3); background: var(--surface); font-size: 0.8125rem; }
+    .swatch__meta strong, .swatch__meta code { display: block; }
+    .swatch__meta code { color: var(--muted); }
+    .type-list { display: grid; gap: 0; }
+    .type-row { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: var(--space-6); align-items: baseline; padding-block: var(--space-4); border-bottom: 1px solid var(--border); }
+    .type-row:last-child { border-bottom: 0; }
+    .type-row code { color: var(--muted); font-size: 0.75rem; }
+    .type-display { font: 400 clamp(2.75rem, 5vw, 4rem)/1.06 var(--font-display); }
+    .type-h1 { font: 400 clamp(2.25rem, 4vw, 3rem)/1.17 var(--font-display); }
+    .type-h2 { font: 400 2rem/1.25 var(--font-display); }
+    .type-h3 { font: 400 1.375rem/1.28 var(--font-display); }
+    .type-body { font: 400 1rem/1.5 var(--font-ui); }
+    .type-small { font: 400 0.875rem/1.43 var(--font-ui); }
+    .type-label { font: 600 0.75rem/1.33 var(--font-ui); letter-spacing: 0.08em; text-transform: uppercase; }
+    .token-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+    .token-card { min-height: 130px; padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--canvas); }
+    .space-demo { height: 12px; margin-block: var(--space-3); border-radius: 2px; background: var(--accent); width: var(--demo-width); }
+    .radius-demo { width: 76px; height: 52px; margin-block: var(--space-3); border: 1px solid var(--border-strong); border-radius: var(--demo-radius); background: var(--surface); }
+
+    .state-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
+    .state-cell { min-height: 110px; display: grid; place-items: center; padding: var(--space-3); border: 1px dashed var(--border); border-radius: var(--radius-md); text-align: center; }
+    .state-cell small { display: block; margin-top: var(--space-2); color: var(--muted); }
+
+    .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+    .field { display: grid; gap: var(--space-2); }
+    .field label, .field legend { font-size: 0.875rem; font-weight: 600; }
+    .required { color: var(--danger); }
+    .input, .select, .textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--ink);
+    }
+    .textarea { min-height: 112px; resize: vertical; }
+    .input::placeholder, .textarea::placeholder { color: #7b776b; }
+    .input:hover, .select:hover, .textarea:hover { border-color: var(--ink); }
+    .input:focus, .select:focus, .textarea:focus { border-color: var(--accent); outline: 2px solid rgba(23, 107, 91, 0.22); outline-offset: 1px; }
+    .input[aria-invalid="true"] { border-color: var(--danger); }
+    .help { margin: 0; color: var(--muted); font-size: 0.8125rem; }
+    .error { margin: 0; color: var(--danger); font-size: 0.8125rem; font-weight: 600; }
+    .choice-list { display: grid; gap: var(--space-3); padding: 0; border: 0; }
+    .choice { min-height: 44px; display: flex; align-items: center; gap: var(--space-3); cursor: pointer; }
+    .choice input { width: 20px; height: 20px; accent-color: var(--accent); }
+    .switch { min-height: 44px; display: inline-flex; align-items: center; gap: var(--space-3); cursor: pointer; }
+    .switch input { position: absolute; opacity: 0; }
+    .switch__track { width: 44px; height: 24px; position: relative; border: 1px solid var(--border-strong); border-radius: 999px; background: var(--border); transition: background var(--duration-fast) var(--ease); }
+    .switch__track::after { position: absolute; width: 18px; height: 18px; top: 2px; left: 2px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.2); content: ""; transition: transform var(--duration-fast) var(--ease); }
+    .switch input:checked + .switch__track { background: var(--accent); border-color: var(--accent); }
+    .switch input:checked + .switch__track::after { transform: translateX(20px); }
+    .switch input:focus-visible + .switch__track { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 999px; background: var(--canvas); color: var(--ink); font-size: 0.75rem; font-weight: 600; }
+    .badge::before { width: 7px; height: 7px; border-radius: 50%; background: currentColor; content: ""; }
+    .badge--success { background: var(--success-soft); color: var(--success); }
+    .badge--warning { background: var(--warning-soft); color: var(--warning); }
+    .badge--danger { background: var(--danger-soft); color: var(--danger); }
+    .badge--info { background: var(--info-soft); color: var(--info); }
+    .badge--outline { border: 1px solid var(--border-strong); background: transparent; }
+    .alert { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: var(--space-3); padding: var(--space-4); border: 1px solid; border-radius: var(--radius-md); }
+    .alert + .alert { margin-top: var(--space-3); }
+    .alert svg { width: 22px; height: 22px; }
+    .alert strong { display: block; margin-bottom: 2px; }
+    .alert p { margin: 0; font-size: 0.875rem; }
+    .alert--info { border-color: #a9bfd9; background: var(--info-soft); color: #243f61; }
+    .alert--success { border-color: #a8cdb7; background: var(--success-soft); color: #1d5336; }
+    .alert--warning { border-color: #ddc594; background: var(--warning-soft); color: #66430f; }
+    .alert--danger { border-color: #dfaba7; background: var(--danger-soft); color: #792925; }
+
+    .breadcrumbs { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; color: var(--muted); font-size: 0.875rem; }
+    .breadcrumbs a { min-height: 36px; display: inline-flex; align-items: center; color: var(--muted); }
+    .tabs { border-bottom: 1px solid var(--border); }
+    .tab-list { display: flex; overflow-x: auto; gap: var(--space-6); }
+    .tab {
+      min-height: 48px;
+      padding: 0;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tab[aria-selected="true"] { border-color: var(--accent); color: var(--ink); }
+    .tab-panel { padding-block: var(--space-6); }
+    .tab-panel[hidden] { display: none; }
+    .pagination { display: flex; align-items: center; gap: var(--space-2); }
+    .page-link { min-width: 44px; min-height: 44px; display: inline-grid; place-items: center; border: 1px solid transparent; border-radius: var(--radius-sm); color: var(--ink); text-decoration: none; }
+    .page-link:hover { border-color: var(--border-strong); background: var(--surface); color: var(--ink); }
+    .page-link[aria-current="page"] { background: var(--accent); color: #fff; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+    .card { min-height: 100%; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+    .card__body { padding: var(--space-6); }
+    .card h3 { margin-bottom: var(--space-2); }
+    .card p { color: var(--muted); }
+    .card__action { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+    .feature-visual { height: 150px; display: grid; place-items: center; background: var(--accent-soft); }
+    .feature-visual svg { width: 72px; color: var(--accent); }
+    .resource-card__meta { display: flex; gap: var(--space-2); color: var(--muted); font-size: 0.75rem; }
+    .metric-card { padding: var(--space-6); background: var(--ink); color: var(--surface); }
+    .metric-card strong { display: block; font: 400 3rem/1 var(--font-display); }
+    .metric-card p { color: #d8d6cc; }
+    .quote-card blockquote { margin: 0; font: 400 1.45rem/1.45 var(--font-display); }
+    .quote-card footer { margin-top: var(--space-6); color: var(--muted); font-size: 0.875rem; }
+    .pricing-card { position: relative; }
+    .pricing-card.is-featured { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .pricing-card__price { font: 400 2.5rem/1.1 var(--font-display); }
+    .pricing-card ul { padding-left: 1.2rem; color: var(--muted); }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
+    table { width: 100%; border-collapse: collapse; background: var(--surface); text-align: left; }
+    caption { padding: var(--space-4); border-bottom: 1px solid var(--border); font-weight: 600; text-align: left; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    th { background: var(--canvas); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    progress { width: 120px; height: 8px; border: 0; border-radius: 99px; overflow: hidden; background: var(--border); }
+    progress::-webkit-progress-bar { background: var(--border); }
+    progress::-webkit-progress-value { background: var(--accent); }
+    progress::-moz-progress-bar { background: var(--accent); }
+    .empty-state { display: grid; justify-items: center; padding: var(--space-12); border: 1px dashed var(--border-strong); border-radius: var(--radius-md); text-align: center; }
+    .empty-state__icon { width: 52px; height: 52px; display: grid; place-items: center; margin-bottom: var(--space-4); border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+
+    details { border-bottom: 1px solid var(--border); }
+    summary { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); cursor: pointer; font-weight: 600; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { color: var(--accent); content: "+"; font-size: 1.5rem; font-weight: 400; }
+    details[open] summary::after { content: "−"; }
+    details p { padding-bottom: var(--space-4); color: var(--muted); }
+
+    .marketing-sample { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .sample-hero { min-height: 520px; display: grid; align-items: center; padding: clamp(48px, 8vw, 100px); background: var(--canvas); }
+    .sample-hero h3 { max-width: 14ch; font-size: clamp(2.5rem, 6vw, 4.7rem); line-height: 1.04; }
+    .sample-hero p { max-width: 48ch; color: var(--muted); font-size: 1.1rem; }
+    .proof-bar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); }
+    .proof-item { min-height: 88px; display: grid; place-items: center; padding: var(--space-4); border-right: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+    .proof-item:last-child { border-right: 0; }
+    .feature-narrative { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: var(--space-12); padding: clamp(48px, 8vw, 96px); background: var(--surface); }
+    .workflow { display: grid; gap: var(--space-3); align-content: center; }
+    .workflow-step { display: grid; grid-template-columns: 36px 1fr; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--canvas); }
+    .workflow-step b { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: var(--accent); color: #fff; }
+    .closing-cta { padding: clamp(64px, 10vw, 120px) var(--space-6); background: var(--ink); color: var(--surface); text-align: center; }
+    .closing-cta h3 { max-width: 18ch; margin-inline: auto; font-size: clamp(2.5rem, 6vw, 4rem); }
+    .closing-cta p { margin-inline: auto; color: #d8d6cc; }
+    .closing-cta .btn { margin-top: var(--space-4); }
+
+    .dialog-backdrop {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: var(--space-4);
+      background: rgba(22, 20, 15, 0.62);
+    }
+    .dialog-backdrop.is-open { display: grid; }
+    .dialog { width: min(100%, 520px); padding: var(--space-8); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-float); }
+    .dialog__header { display: flex; justify-content: space-between; gap: var(--space-4); }
+    .dialog__header h2 { margin-bottom: var(--space-3); font-size: 2rem; }
+    .dialog__actions { display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-6); }
+    .toast {
+      position: fixed;
+      z-index: 120;
+      right: 20px;
+      bottom: 20px;
+      width: min(calc(100% - 40px), 380px);
+      display: none;
+      grid-template-columns: 24px 1fr;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: var(--shadow-float);
+    }
+    .toast.is-visible { display: grid; }
+
+    .global-footer { padding-block: var(--space-12); background: var(--ink); color: var(--surface); }
+    .global-footer__grid { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: var(--space-8); }
+    .global-footer a { min-height: 36px; display: flex; align-items: center; color: #d8d6cc; }
+    .global-footer strong { display: block; margin-bottom: var(--space-3); }
+
+    @media (max-width: 980px) {
+      .hero-grid, .feature-narrative { grid-template-columns: 1fr; }
+      .specimen-layout { grid-template-columns: 1fr; }
+      .toc { position: static; display: flex; overflow-x: auto; gap: var(--space-4); border-left: 0; border-bottom: 1px solid var(--border); }
+      .toc strong { display: none; }
+      .toc a { flex: 0 0 auto; }
+      .swatch-grid, .state-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .global-footer__grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .main-nav {
+        position: absolute;
+        top: 72px;
+        right: 16px;
+        left: 16px;
+        display: none;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 0;
+        padding: var(--space-3);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+        box-shadow: var(--shadow-float);
+      }
+      .main-nav.is-open { display: flex; }
+      .main-nav a { padding-inline: var(--space-3); }
+      .btn.nav-toggle { display: inline-flex; }
+      .section-heading, .field-grid { grid-template-columns: 1fr; }
+      .section-heading { gap: var(--space-3); }
+      .metric-row, .token-grid, .card-grid { grid-template-columns: 1fr; }
+      .proof-bar { grid-template-columns: repeat(2, 1fr); }
+      .proof-item:nth-child(2) { border-right: 0; }
+      .proof-item:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+      .global-footer__grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .shell, .shell-wide { width: min(calc(100% - 24px), var(--container)); }
+      .specimen-block { padding: var(--space-4); }
+      .swatch-grid, .state-grid { grid-template-columns: 1fr; }
+      .type-row { grid-template-columns: 1fr; gap: var(--space-2); }
+      .hero { padding-top: var(--space-20); }
+      .hero-copy .cluster { display: grid; grid-template-columns: 1fr; }
+      .hero-copy .cluster .btn { width: 100%; }
+      .dialog { padding: var(--space-6); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+      .btn:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="global-header">
+    <div class="global-header__inner shell-wide">
+      <a class="wordmark" href="#top" aria-label="Minimal design system home">
+        <span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        <span>minimal</span>
+      </a>
+      <nav class="main-nav" id="main-nav" aria-label="Primary">
+        <a href="#foundations">Foundations</a>
+        <a href="#controls">Components</a>
+        <a href="#patterns">Patterns</a>
+        <a href="#accessibility">Accessibility</a>
+        <a class="btn btn--primary btn--sm" href="#patterns">View patterns</a>
+      </nav>
+      <button class="btn btn--secondary btn--icon nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+        <span aria-hidden="true">☰</span><span class="sr-only">Toggle navigation</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="page-title">
+      <div class="hero-grid shell-wide">
+        <div class="hero-copy">
+          <p class="eyebrow">Design system · Draft 0.1</p>
+          <h1 id="page-title">Quiet foundations. Exact outcomes.</h1>
+          <p class="lede">A restrained, editorial component system for Minimal’s 30-page B2B product site—built around semantic tokens, clear states, and product evidence.</p>
+          <div class="cluster">
+            <a class="btn btn--primary btn--lg" href="#foundations">Explore foundations</a>
+            <button class="btn btn--secondary btn--lg" type="button" data-open-dialog>Open demo dialog</button>
+          </div>
+        </div>
+        <div class="product-frame" aria-label="Product analytics interface example">
+          <div class="product-frame__bar">
+            <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span class="meta">Adoption overview · Demo</span>
+          </div>
+          <div class="product-frame__body">
+            <p class="eyebrow">Workspace health</p>
+            <div class="metric-row">
+              <div class="mini-metric"><strong>68%</strong><span class="meta">Activation</span></div>
+              <div class="mini-metric"><strong>4.2</strong><span class="meta">Features used</span></div>
+              <div class="mini-metric"><strong>12d</strong><span class="meta">Time to value</span></div>
+            </div>
+            <div class="chart" role="img" aria-label="Demo bar chart showing adoption increasing over twelve periods">
+              <span style="height:30%"></span><span style="height:38%"></span><span style="height:34%"></span><span style="height:46%"></span><span style="height:52%"></span><span style="height:49%"></span><span style="height:62%"></span><span style="height:58%"></span><span style="height:70%"></span><span style="height:76%"></span><span style="height:72%"></span><span style="height:86%"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="specimen-layout shell-wide">
+      <nav class="toc" aria-label="Design system sections">
+        <strong>On this page</strong>
+        <a href="#foundations">Foundations</a>
+        <a href="#controls">Buttons</a>
+        <a href="#forms">Forms</a>
+        <a href="#navigation">Navigation</a>
+        <a href="#feedback">Feedback</a>
+        <a href="#cards">Cards</a>
+        <a href="#data">Data</a>
+        <a href="#overlays">Overlays</a>
+        <a href="#patterns">Patterns</a>
+        <a href="#accessibility">Accessibility</a>
+      </nav>
+
+      <div class="specimen">
+        <section class="section" id="foundations" aria-labelledby="foundations-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">01 · Foundations</p><h2 id="foundations-title">A narrow visual vocabulary</h2></div>
+            <p>Warm neutrals carry the canvas. Green identifies action and state. Editorial type creates emphasis while interface type keeps work clear.</p>
+          </div>
+
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Semantic colors</strong><code>8 tokens</code></div>
+            <div class="swatch-grid">
+              <div class="swatch"><div class="swatch__color" style="--swatch:#f5f5ee"></div><div class="swatch__meta"><strong>Canvas</strong><code>#F5F5EE</code></div></div>
+              <div class="swatch"><div class="swatch__color" style="--swatch:#ffffff"></div><div class="swatch__meta"><strong>Surface</strong><code>#FFFFFF</code></div></div>
+              <div class="swatch"><div class="swatch__color" style="--swatch:#16140f"></div><div class="swatch__meta"><strong>Ink</strong><code>#16140F</code></div></div>
+              <div class="swatch"><div class="swatch__color" style="--swatch:#6b675b"></div><div class="swatch__meta"><strong>Muted</strong><code>#6B675B</code></div></div>
+              <div class="swatch"><div class="swatch__color" style="--swatch:#d8d6cc"></div><div class="swatch__meta"><strong>Border</strong><code>#D8D6CC</code></div></div>
+              <div class="swatch"><div class="swatch__color" style="--swatch:#176b5b"></div><div class="swatch__meta"><strong>Accent</strong><code>#176B5B</code></div></div>
+              <div class="swatch"><div class="swatch__color" style="--swatch:#0f5146"></div><div class="swatch__meta"><strong>Accent hover</strong><code>#0F5146</code></div></div>
+              <div class="swatch"><div class="swatch__color" style="--swatch:#9a3732"></div><div class="swatch__meta"><strong>Danger</strong><code>#9A3732</code></div></div>
+            </div>
+          </div>
+
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Type roles</strong><code>Literata · IBM Plex Sans</code></div>
+            <div class="type-list">
+              <div class="type-row"><code>Display · 64/68</code><span class="type-display">Understand the work.</span></div>
+              <div class="type-row"><code>H1 · 48/56</code><span class="type-h1">Make adoption visible.</span></div>
+              <div class="type-row"><code>H2 · 32/40</code><span class="type-h2">Evidence before opinion</span></div>
+              <div class="type-row"><code>H3 · 22/28</code><span class="type-h3">Activation by segment</span></div>
+              <div class="type-row"><code>Body · 16/24</code><span class="type-body">Connect behavior, feedback, and guidance in one operational view.</span></div>
+              <div class="type-row"><code>Small · 14/20</code><span class="type-small">Updated 12 minutes ago · Demo data</span></div>
+              <div class="type-row"><code>Label · 12/16</code><span class="type-label">Product analytics</span></div>
+            </div>
+          </div>
+
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Spacing and geometry</strong><code>4px foundation</code></div>
+            <div class="token-grid">
+              <div class="token-card"><strong>Component rhythm</strong><div class="space-demo" style="--demo-width:32px"></div><code>4 · 8 · 12 · 16 · 24 · 32</code></div>
+              <div class="token-card"><strong>Section rhythm</strong><div class="space-demo" style="--demo-width:120px"></div><code>48 · 80 · 120</code></div>
+              <div class="token-card"><strong>Radius small</strong><div class="radius-demo" style="--demo-radius:4px"></div><code>4px · controls</code></div>
+              <div class="token-card"><strong>Radius medium</strong><div class="radius-demo" style="--demo-radius:8px"></div><code>8px · surfaces</code></div>
+              <div class="token-card"><strong>Radius large</strong><div class="radius-demo" style="--demo-radius:12px"></div><code>12px · media</code></div>
+              <div class="token-card"><strong>Floating elevation</strong><div class="radius-demo" style="--demo-radius:8px;box-shadow:var(--shadow-float)"></div><code>overlays only</code></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="controls" aria-labelledby="controls-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">02 · Controls</p><h2 id="controls-title">Buttons with a clear hierarchy</h2></div>
+            <p>Primary advances the workflow. Secondary preserves choice. Tertiary supports low-emphasis navigation. Danger is reserved for destructive actions.</p>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Variants</strong><code>primary · secondary · tertiary · danger · icon</code></div>
+            <div class="cluster">
+              <button class="btn btn--primary" type="button">Request a demo</button>
+              <button class="btn btn--secondary" type="button">View analytics</button>
+              <button class="btn btn--tertiary" type="button">Read the guide</button>
+              <button class="btn btn--danger" type="button">Delete workspace</button>
+              <button class="btn btn--secondary btn--icon" type="button" aria-label="More options">•••</button>
+            </div>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Sizes</strong><code>small · default · large</code></div>
+            <div class="cluster">
+              <button class="btn btn--primary btn--sm" type="button">Small</button>
+              <button class="btn btn--primary" type="button">Default</button>
+              <button class="btn btn--primary btn--lg" type="button">Large action</button>
+            </div>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>States</strong><code>default · hover · active · loading · disabled</code></div>
+            <div class="state-grid">
+              <div class="state-cell"><div><button class="btn btn--primary" type="button">Default</button><small>Rest</small></div></div>
+              <div class="state-cell"><div><button class="btn btn--primary is-hover" type="button">Hover</button><small>Elevated −1px</small></div></div>
+              <div class="state-cell"><div><button class="btn btn--primary is-active" type="button">Active</button><small>Pressed</small></div></div>
+              <div class="state-cell"><div><button class="btn btn--primary" type="button" aria-busy="true">Saving</button><small>Busy</small></div></div>
+              <div class="state-cell"><div><button class="btn btn--primary" type="button" disabled>Unavailable</button><small>Disabled</small></div></div>
+              <div class="state-cell"><div><button class="btn btn--secondary" type="button">Focus with Tab</button><small>2px ring</small></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="forms" aria-labelledby="forms-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">03 · Forms</p><h2 id="forms-title">Visible labels and useful errors</h2></div>
+            <p>Fields use stable labels, persistent help text, and textual error states. Placeholder text never carries the instruction alone.</p>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Text fields</strong><code>default · select · textarea · error</code></div>
+            <form class="field-grid" action="#" onsubmit="return false">
+              <div class="field">
+                <label for="work-email">Work email <span class="required" aria-hidden="true">*</span></label>
+                <input class="input" id="work-email" type="email" autocomplete="email" placeholder="you@company.com" aria-describedby="email-help" required>
+                <p class="help" id="email-help">Use the address connected to your workspace.</p>
+              </div>
+              <div class="field">
+                <label for="role">Role</label>
+                <select class="select" id="role">
+                  <option>Product leader</option><option>Product manager</option><option>Customer success</option><option>Digital adoption</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="company">Company <span class="required" aria-hidden="true">*</span></label>
+                <input class="input" id="company" value="M" aria-invalid="true" aria-describedby="company-error">
+                <p class="error" id="company-error">Enter at least two characters.</p>
+              </div>
+              <div class="field">
+                <label for="goals">What are you trying to improve?</label>
+                <textarea class="textarea" id="goals" placeholder="Describe the workflow or adoption problem."></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Choice controls</strong><code>checkbox · radio · switch</code></div>
+            <div class="field-grid">
+              <fieldset class="choice-list">
+                <legend>Include in report</legend>
+                <label class="choice"><input type="checkbox" checked> Activation</label>
+                <label class="choice"><input type="checkbox"> Retention</label>
+                <label class="choice"><input type="checkbox"> Feedback themes</label>
+              </fieldset>
+              <div class="stack">
+                <fieldset class="choice-list">
+                  <legend>Reporting cadence</legend>
+                  <label class="choice"><input type="radio" name="cadence" checked> Weekly</label>
+                  <label class="choice"><input type="radio" name="cadence"> Monthly</label>
+                </fieldset>
+                <label class="switch"><input type="checkbox" checked><span class="switch__track" aria-hidden="true"></span><span>Email summary</span></label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="navigation" aria-labelledby="navigation-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">04 · Navigation</p><h2 id="navigation-title">Orientation at every depth</h2></div>
+            <p>Breadcrumbs locate the page, tabs organize peer views, and pagination moves through ordered collections without changing component behavior.</p>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Breadcrumbs</strong><code>aria-current</code></div>
+            <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="#">Products</a><span aria-hidden="true">/</span><a href="#">Analytics</a><span aria-hidden="true">/</span><span aria-current="page">Adoption</span></nav>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Tabs</strong><code>arrow-key enabled</code></div>
+            <div class="tabs" data-tabs>
+              <div class="tab-list" role="tablist" aria-label="Analytics views">
+                <button class="tab" id="tab-overview" role="tab" aria-selected="true" aria-controls="panel-overview" tabindex="0">Overview</button>
+                <button class="tab" id="tab-segments" role="tab" aria-selected="false" aria-controls="panel-segments" tabindex="-1">Segments</button>
+                <button class="tab" id="tab-events" role="tab" aria-selected="false" aria-controls="panel-events" tabindex="-1">Events</button>
+              </div>
+              <div class="tab-panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">Activation is strongest among teams that complete the shared-workspace setup.</div>
+              <div class="tab-panel" id="panel-segments" role="tabpanel" aria-labelledby="tab-segments" hidden>Compare adoption by plan, company size, role, or lifecycle stage.</div>
+              <div class="tab-panel" id="panel-events" role="tabpanel" aria-labelledby="tab-events" hidden>Define the actions that indicate meaningful product value.</div>
+            </div>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Pagination</strong><code>collection navigation</code></div>
+            <nav class="pagination" aria-label="Resource pages"><a class="page-link" href="#" aria-label="Previous page">←</a><a class="page-link" href="#">1</a><a class="page-link" href="#" aria-current="page">2</a><a class="page-link" href="#">3</a><a class="page-link" href="#" aria-label="Next page">→</a></nav>
+          </div>
+        </section>
+
+        <section class="section" id="feedback" aria-labelledby="feedback-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">05 · Feedback</p><h2 id="feedback-title">Status with language, not color alone</h2></div>
+            <p>Badges pair color with text. Alerts identify severity through icon, heading, and explanation so meaning survives low vision and monochrome contexts.</p>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Badges</strong><code>neutral · success · warning · danger · info</code></div>
+            <div class="cluster"><span class="badge">Draft</span><span class="badge badge--success">Published</span><span class="badge badge--warning">Needs review</span><span class="badge badge--danger">Blocked</span><span class="badge badge--info">In progress</span><span class="badge badge--outline">Archived</span></div>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Alerts</strong><code>informative · positive · caution · critical</code></div>
+            <div class="alert alert--info"><span aria-hidden="true">ⓘ</span><div><strong>Report is still collecting data</strong><p>Early results may change as more events arrive.</p></div></div>
+            <div class="alert alert--success"><span aria-hidden="true">✓</span><div><strong>Workspace connected</strong><p>Minimal can now receive product events.</p></div></div>
+            <div class="alert alert--warning"><span aria-hidden="true">!</span><div><strong>Three events need labels</strong><p>Add plain-language names before sharing this report.</p></div></div>
+            <div class="alert alert--danger"><span aria-hidden="true">×</span><div><strong>Import failed</strong><p>The uploaded file is missing the required user identifier.</p></div><button class="btn btn--tertiary btn--sm" type="button">Review</button></div>
+          </div>
+        </section>
+
+        <section class="section" id="cards" aria-labelledby="cards-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">06 · Cards</p><h2 id="cards-title">Purpose-specific content containers</h2></div>
+            <p>Every card variant has a fixed job and content contract. Borders and surface contrast establish grouping; shadows remain reserved for floating UI.</p>
+          </div>
+          <div class="card-grid">
+            <article class="card">
+              <div class="feature-visual" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M10 45V31m15 14V19m15 26V26m15 19V10" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M7 51h50" stroke="currentColor" stroke-width="2"/></svg></div>
+              <div class="card__body"><p class="eyebrow">Feature card</p><h3>Find adoption friction</h3><p>See where users stall, which paths create value, and where guidance belongs.</p><a class="card__action" href="#">Explore analytics <span aria-hidden="true">→</span></a></div>
+            </article>
+            <article class="card resource-card">
+              <div class="card__body"><div class="resource-card__meta"><span>Guide</span><span>·</span><span>12 min</span></div><h3>Product adoption benchmark</h3><p>A practical framework for measuring activation, breadth, depth, and retention.</p><a class="card__action" href="#">Read the guide <span aria-hidden="true">→</span></a></div>
+            </article>
+            <article class="card metric-card"><p class="eyebrow" style="color:#d8d6cc">Metric card · Demo only</p><strong>2.4×</strong><p>More users reach the key workflow after targeted in-app guidance.</p><a class="card__action" href="#" style="color:#fff">Review methodology <span aria-hidden="true">→</span></a></article>
+            <figure class="card quote-card"><div class="card__body"><blockquote>“We stopped debating adoption and started working from the same evidence.”</blockquote><footer>Fictional customer · Demo only</footer></div></figure>
+            <article class="card pricing-card"><div class="card__body"><p class="eyebrow">Foundation</p><h3>Start with the essentials</h3><p class="pricing-card__price">$0 <span class="type-small">demo</span></p><ul><li>Core analytics</li><li>Three guides</li><li>Community support</li></ul><button class="btn btn--secondary" type="button">Choose Foundation</button></div></article>
+            <article class="card pricing-card is-featured"><div class="card__body"><span class="badge badge--success">Recommended</span><p class="eyebrow" style="margin-top:16px">Scale</p><h3>Coordinate every product team</h3><p class="pricing-card__price">Custom</p><ul><li>Advanced analytics</li><li>Unlimited guides</li><li>Priority support</li></ul><button class="btn btn--primary" type="button">Request pricing</button></div></article>
+          </div>
+        </section>
+
+        <section class="section" id="data" aria-labelledby="data-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">07 · Data display</p><h2 id="data-title">Dense information stays legible</h2></div>
+            <p>Tables preserve labels and reading order. Progress indicators include numeric text. Empty states explain both cause and next action.</p>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Data table</strong><code>responsive overflow</code></div>
+            <div class="table-wrap">
+              <table>
+                <caption>Feature adoption by workspace · Demo data</caption>
+                <thead><tr><th scope="col">Workspace</th><th scope="col">Activation</th><th scope="col">Progress</th><th scope="col">Status</th></tr></thead>
+                <tbody>
+                  <tr><td>Northwind</td><td>82%</td><td><progress value="82" max="100">82%</progress></td><td><span class="badge badge--success">Healthy</span></td></tr>
+                  <tr><td>Acme Labs</td><td>61%</td><td><progress value="61" max="100">61%</progress></td><td><span class="badge badge--warning">Monitor</span></td></tr>
+                  <tr><td>Orbit Systems</td><td>34%</td><td><progress value="34" max="100">34%</progress></td><td><span class="badge badge--danger">At risk</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Empty state</strong><code>explanation + action</code></div>
+            <div class="empty-state"><div class="empty-state__icon" aria-hidden="true">＋</div><h3>No guides yet</h3><p class="help">Create a guide when you know which workflow needs support.</p><button class="btn btn--primary" type="button">Create a guide</button></div>
+          </div>
+        </section>
+
+        <section class="section" id="overlays" aria-labelledby="overlays-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">08 · Overlays</p><h2 id="overlays-title">Interruptions earn their space</h2></div>
+            <p>Dialogs require a decision. Toasts confirm background changes without stealing focus. Both announce state to assistive technology.</p>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Interactive demos</strong><code>dialog · toast</code></div>
+            <div class="cluster"><button class="btn btn--primary" type="button" data-open-dialog>Open dialog</button><button class="btn btn--secondary" type="button" id="show-toast">Show confirmation toast</button></div>
+          </div>
+          <div class="specimen-block">
+            <div class="specimen-label"><strong>Accordion</strong><code>native details</code></div>
+            <details><summary>What makes a page canonical?</summary><p>One Markdown file owns one public route. Every adapter consumes normalized content generated from that file.</p></details>
+            <details><summary>How are fictional claims handled?</summary><p>Metrics, customer names, certifications, and endorsements remain visibly labeled as demonstration content.</p></details>
+            <details><summary>Which changes require human approval?</summary><p>Brand positioning, schema migrations, claims policy, representative page quality, and final merge stay human-controlled.</p></details>
+          </div>
+        </section>
+
+        <section class="section" id="patterns" aria-labelledby="patterns-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">09 · Marketing patterns</p><h2 id="patterns-title">Editorial in moments. Systematic everywhere.</h2></div>
+            <p>These governed sections create the narrative-to-evidence rhythm used across home, product, solution, industry, resource, and landing pages.</p>
+          </div>
+          <div class="marketing-sample">
+            <section class="sample-hero" aria-labelledby="sample-hero-title"><div><p class="eyebrow">Product experience, made visible</p><h3 id="sample-hero-title">Know where users find value.</h3><p>Minimal connects behavior, feedback, and guidance so product teams can improve the moments that matter.</p><div class="cluster"><a class="btn btn--primary btn--lg" href="#">See Minimal in action</a><a class="btn btn--tertiary btn--lg" href="#">Explore analytics</a></div></div></section>
+            <div class="proof-bar" aria-label="Fictional customer proof"><div class="proof-item">Northwind</div><div class="proof-item">Orbit</div><div class="proof-item">Acme Labs</div><div class="proof-item">Fieldwork</div></div>
+            <section class="feature-narrative" aria-labelledby="workflow-title"><div><p class="eyebrow">Workflow pattern</p><h3 id="workflow-title" style="font-size:2.4rem">From signal to action</h3><p class="lede">A repeatable sequence keeps research, decisions, and guidance connected.</p></div><div class="workflow"><div class="workflow-step"><b>1</b><div><strong>Observe behavior</strong><div class="meta">Find the paths that create or block value.</div></div></div><div class="workflow-step"><b>2</b><div><strong>Understand intent</strong><div class="meta">Connect patterns to feedback and context.</div></div></div><div class="workflow-step"><b>3</b><div><strong>Guide the next step</strong><div class="meta">Deliver support inside the relevant workflow.</div></div></div></div></section>
+            <section class="closing-cta" aria-labelledby="cta-title"><p class="eyebrow" style="color:#d8d6cc">Closing CTA</p><h3 id="cta-title">Make product decisions from shared evidence.</h3><p>See how Minimal brings analytics, feedback, and guidance into one operating view.</p><a class="btn btn--primary btn--lg" href="#">Request a demo</a></section>
+          </div>
+        </section>
+
+        <section class="section" id="accessibility" aria-labelledby="accessibility-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">10 · Accessibility</p><h2 id="accessibility-title">WCAG 2.2 AA is the baseline</h2></div>
+            <p>The system treats accessibility as component behavior: contrast, states, focus, semantics, input support, and responsive reflow are part of every definition.</p>
+          </div>
+          <div class="field-grid">
+            <div class="specimen-block" style="margin:0"><h3>Perceivable</h3><ul><li>Normal text contrast ≥ 4.5:1</li><li>UI and large text contrast ≥ 3:1</li><li>Meaning never relies on color alone</li><li>Charts provide text alternatives</li></ul></div>
+            <div class="specimen-block" style="margin:0"><h3>Operable</h3><ul><li>All controls work with a keyboard</li><li>Visible 2px focus treatment</li><li>44×44px preferred targets</li><li>Reduced-motion equivalent</li></ul></div>
+            <div class="specimen-block" style="margin:0"><h3>Understandable</h3><ul><li>Visible labels and instructions</li><li>Textual, associated errors</li><li>Consistent component behavior</li><li>Predictable navigation placement</li></ul></div>
+            <div class="specimen-block" style="margin:0"><h3>Robust</h3><ul><li>Semantic HTML before ARIA</li><li>Landmarks and heading order</li><li>Live regions for status changes</li><li>Test at 320px and 400% reflow</li></ul></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="global-footer">
+    <div class="global-footer__grid shell-wide">
+      <div><a class="wordmark" href="#top" style="color:#fff"><span class="mark" aria-hidden="true" style="border-color:#fff"><span style="background:#fff"></span><span></span><span style="background:#fff"></span><span style="background:#fff"></span><span></span><span style="background:#fff"></span><span style="background:#fff"></span><span></span><span style="background:#fff"></span></span><span>minimal</span></a><p style="color:#d8d6cc">A fictional product-experience platform and demonstration design system.</p></div>
+      <div><strong>Product</strong><a href="#patterns">Analytics</a><a href="#patterns">Guidance</a><a href="#patterns">Feedback</a></div>
+      <div><strong>Resources</strong><a href="#cards">Guides</a><a href="#data">Benchmarks</a><a href="#accessibility">Accessibility</a></div>
+      <div><strong>System</strong><a href="#foundations">Foundations</a><a href="#controls">Components</a><a href="#patterns">Patterns</a></div>
+    </div>
+  </footer>
+
+  <div class="dialog-backdrop" id="dialog-backdrop" aria-hidden="true">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-description">
+      <div class="dialog__header"><div><p class="eyebrow">Demo dialog</p><h2 id="dialog-title">Create an adoption report</h2></div><button class="btn btn--secondary btn--icon" type="button" data-close-dialog aria-label="Close dialog">×</button></div>
+      <p id="dialog-description" class="lede">Choose a name for the report. You can add segments and events after creation.</p>
+      <div class="field"><label for="report-name">Report name</label><input class="input" id="report-name" value="Activation overview"></div>
+      <div class="dialog__actions"><button class="btn btn--secondary" type="button" data-close-dialog>Cancel</button><button class="btn btn--primary" type="button" id="create-report">Create report</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"><span aria-hidden="true">✓</span><div><strong>Report created</strong><div class="meta">Activation overview is ready to configure.</div></div></div>
+
+  <script>
+    (() => {
+      const navToggle = document.querySelector('#nav-toggle');
+      const nav = document.querySelector('#main-nav');
+      navToggle?.addEventListener('click', () => {
+        const open = nav.classList.toggle('is-open');
+        navToggle.setAttribute('aria-expanded', String(open));
+      });
+      nav?.addEventListener('click', event => {
+        if (event.target.matches('a') && window.innerWidth <= 760) {
+          nav.classList.remove('is-open');
+          navToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      document.querySelectorAll('[data-tabs]').forEach(group => {
+        const tabs = [...group.querySelectorAll('[role="tab"]')];
+        const activate = tab => {
+          tabs.forEach(item => {
+            const selected = item === tab;
+            item.setAttribute('aria-selected', String(selected));
+            item.tabIndex = selected ? 0 : -1;
+            document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+          });
+        };
+        tabs.forEach((tab, index) => {
+          tab.addEventListener('click', () => activate(tab));
+          tab.addEventListener('keydown', event => {
+            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+            event.preventDefault();
+            let next = index;
+            if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+            if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+            if (event.key === 'Home') next = 0;
+            if (event.key === 'End') next = tabs.length - 1;
+            activate(tabs[next]);
+            tabs[next].focus();
+          });
+        });
+      });
+
+      const backdrop = document.querySelector('#dialog-backdrop');
+      const dialog = backdrop.querySelector('[role="dialog"]');
+      let returnFocus;
+      const focusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href]';
+      const openDialog = trigger => {
+        returnFocus = trigger;
+        backdrop.classList.add('is-open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        dialog.querySelector(focusableSelector)?.focus();
+      };
+      const closeDialog = () => {
+        backdrop.classList.remove('is-open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        returnFocus?.focus();
+      };
+      document.querySelectorAll('[data-open-dialog]').forEach(button => button.addEventListener('click', () => openDialog(button)));
+      document.querySelectorAll('[data-close-dialog]').forEach(button => button.addEventListener('click', closeDialog));
+      backdrop.addEventListener('click', event => { if (event.target === backdrop) closeDialog(); });
+      document.addEventListener('keydown', event => {
+        if (!backdrop.classList.contains('is-open')) return;
+        if (event.key === 'Escape') closeDialog();
+        if (event.key === 'Tab') {
+          const focusable = [...dialog.querySelectorAll(focusableSelector)];
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
+      });
+
+      const toast = document.querySelector('#toast');
+      let toastTimer;
+      const showToast = () => {
+        clearTimeout(toastTimer);
+        toast.classList.add('is-visible');
+        toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 4200);
+      };
+      document.querySelector('#show-toast')?.addEventListener('click', showToast);
+      document.querySelector('#create-report')?.addEventListener('click', () => { closeDialog(); showToast(); });
+    })();
+  </script>
+</body>
+</html>
